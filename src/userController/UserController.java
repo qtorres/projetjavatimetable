@@ -127,8 +127,8 @@ public class UserController implements IUserController
 
 	@Override
 	public boolean loadDB() {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.loadDB();
+	
 	}
 
 	@Override

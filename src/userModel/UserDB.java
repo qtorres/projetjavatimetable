@@ -31,12 +31,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-
-
-// Start of user code (user defined imports)
-
-// End of user code
-
 /**
  * Description of UserDB.
  * 
@@ -46,7 +40,7 @@ public class UserDB {
 	/**
 	 * Description of the property file.
 	 */
-	private Object file;
+	
 	protected List<Utilisateur> user= new LinkedList<Utilisateur>();
 	protected int NombreAdmin = 0;
 	protected int NombreEtudiant = 0;
@@ -54,33 +48,25 @@ public class UserDB {
 	protected List<Groupe> group = new LinkedList<Groupe>();
 	private String nomfichier;
 	
-	// Start of user code (user defined attributes for UserDB)
-	
-	// End of user code
-
 	/**
 	 * The constructor.
 	 */
 	public UserDB(String userfile) {
 		
-		this.setFile(userfile);
 		this.nomfichier=userfile;
 		loadDB();
-		
 	}
 
 	/**
 	 * charge la base de données à partir du fichier XML
 	 * 
 	 */
-	public void loadDB()  {
+	public boolean loadDB()  {
 		SAXBuilder sax;
 		sax = new SAXBuilder();
 		Document document;
         document = null;
         Element racine;
-        String login, mdp, prenom, nom, id, g;
-        Object object;
         
         try { //on essaye d'ouvrir le fichier
             document = sax.build(new File(this.nomfichier));
@@ -101,15 +87,16 @@ public class UserDB {
         	
         	//Pour les administrateurs
         	Chargement_Administrateur(racine);
+        	
+        	return true;
         	  } //fin if
-       
+       return false;
         	   }
         
 	  public void Chargement_Etudiant(Element racine) {
 		
 	        String login, mdp, prenom, nom, id, g;
-	       
-		  
+
 		//On descend d'un cran
       	Element racine2 = racine.getChild("Students");
           
@@ -139,6 +126,7 @@ public class UserDB {
       	      if(g!="-1") { //Si l'étudiant à un groupe
       	    	  //on l'ajoute au groupe
       	    	  AddStudenttoGroup(etudiant);
+      	    	  //A CHANGER
       	      }
 	  }
  
@@ -272,23 +260,97 @@ public class UserDB {
 		  }
 	  }
 	  
+	  public boolean associateStudToGroup(String adminLogin, String studentLogin, int groupId) {
+		  
+		  int admin = IndexUser(adminLogin);
+		  if (admin==-1)
+			  return false;
+		  
+		  if(user.get(admin).GetClasse() == "Administrateur") {
+			  int etudiant = IndexUser(studentLogin);
+			  if(etudiant == -1)
+				  return false;
+			  
+			  //on vérifie que le groupe existe
+			  int groupe = IndexGroup(groupId);
+			  if(groupe != -1) {
+				//on ajoute l'étudiant
+				  group.get(groupe).getEtudiants().add((Etudiants)user.get(etudiant));  
+				  return true;
+			  }
+			  else {
+				//Si le groupe n'existe pas
+				  Groupe g = new Groupe(groupId);
+				  group.add(g);
+				  
+			  }
+		  
+			  saveDB();
+		  return true;
+		  }
+		  return false;
+	  }
+	  
+	  public Utilisateur ResearchUser(String login) {
+		  int i = 0;
+		  for(i=0; i<user.size(); i++) {
+			  if(user.get(i).GetLogin() == login)
+				  return user.get(i);
+		  }
+		  return null;
+	  }
+	  
+	  public int IndexUser(String login) {
+		  int i = 0;
+		  for(i=0; i<user.size(); i++) {
+			  if(user.get(i).GetLogin() == login)
+				  return i;
+		  }
+		  return -1;
+	  }
+	  
+	  public Groupe ResearchGroup(int id) {
+		  int i = 0;
+		  for(i=0; i<group.size(); i++) {
+			  if(group.get(i).GetIdGroup() == id)
+				  return group.get(i);
+		  }
+		  return null;
+	  }
+	 
+	  public int IndexGroup(int id) {
+		  int i = 0;
+		  for(i=0; i<group.size(); i++) {
+			  if(group.get(i).GetIdGroup() == id)
+				  return i;
+		  }
+		  return -1;
+	  }
+	  
 	 /**
 	 * Description of the method saveDB.
 	 */
 	public void saveDB() {
-		// Start of user code for method saveDB
-		// End of user code
+		
 	}
 
 	//renvoie la classe de la personne à partir du login et du mot de passe
 	public String getUserClass(String userLogin, String userPwd) {
+		String classe;
 		//on parcourt la liste
 		for(int i=0; i<user.size(); i++) { 
 			//on compare
 			if(user.get(i).GetLogin()==userLogin && user.get(i).GetMot_De_Passe() == userPwd) {
 				//Si trouvé, on retourne
-				return user.get(i).GetClasse(); 
+				classe = user.get(i).GetClasse(); 
+				if(classe == "Administrateur")
+					return "Administrator";
+				if(classe == "Professeur")
+					return "Teacher";
+				if(classe == "Etudiant")
+					return "Student";
 			}
+			
 		}
 		//Si non trouvé -> message d'erreur
 		return "Login / mot de passe incorrect";
@@ -356,22 +418,6 @@ public class UserDB {
  		return tabGroup;
  	}
  	
-	/**
-	 * Returns file.
-	 * @return file 
-	 */
-	public Object getFile() {
-		return this.file;
-	}
-
-	/**
-	 * Sets a value to attribute file.
-	 * @param newFile 
-	 */
-	public void setFile(Object newFile) {
-		this.file = newFile;
-	}
-	
     public List<Utilisateur> Getuser() {
 	 return user;
  }

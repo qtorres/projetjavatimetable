@@ -128,7 +128,11 @@ public abstract class Utilisateur {
 		return Login;
 		// End of user code
 	}
-
+	
+	public Utilisateur GetUser() {
+		return this;
+	}
+	
 	/**
 	 * Description of the method GetMot_De_Passe.
 	 * @return 
