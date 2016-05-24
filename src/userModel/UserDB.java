@@ -3,6 +3,8 @@
  * 
  * je vous aime
  * Commit !!!
+ * 
+ * moi aussi
  *******************************************************************************/
 package userModel;
 import java.util.LinkedList;
