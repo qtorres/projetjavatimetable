@@ -21,6 +21,7 @@ public class Etudiants extends Utilisateur {
 	 * Description of the property IdEtudiant.
 	 */
 	protected int IdEtudiant = 0;
+	protected int IdEtudiantGroup = -1;
 
 //---------------------------------------SET----------------------------------
 	/**
@@ -33,7 +34,10 @@ public class Etudiants extends Utilisateur {
 		// End of user code
 	}
 
-	
+	public void SetIdEtudiantGroup(int id) {
+		this.IdEtudiantGroup = id;
+	}
+
 	
 //---------------------------------------GET----------------------------------
 	/**
@@ -44,6 +48,10 @@ public class Etudiants extends Utilisateur {
 		// Start of user code for method getidetudiant
 		return IdEtudiant;
 		// End of user code
+	}
+	
+	public int GetIdEtudiantGroup() {
+		return this.IdEtudiantGroup;
 	}
 
 //--------------------------------------METHODES---------------------------------	
@@ -59,9 +67,10 @@ public class Etudiants extends Utilisateur {
 		// End of user code
 	//}
 
-public Etudiants(int id, String Prenom, String Nom, String Login, String MDP) {
+public Etudiants(int id, String Prenom, String Nom, String Login, String MDP, int idgroup) {
 	super(Prenom, Nom, Login, MDP, "Etudiant");
 	SetIdEtudiant(id);
+	SetIdEtudiantGroup(idgroup);
 	
 }
 

@@ -17,7 +17,6 @@ public class Groupe {
 	 * Description of the property IdGroup.
 	 */
 	protected int IdGroup = 0;
-	
 	protected int NombreEtudiant = 0;
 
 	/**
@@ -53,6 +52,15 @@ public class Groupe {
 
 	public int GetNombreEtudiant() {
 		return NombreEtudiant;
+	}
+	
+	public void IncrementNombreEtudiant() {
+		NombreEtudiant++;
+	}
+	
+	public void DecrementNombreEtudiant() {
+		if(NombreEtudiant > 0)
+		NombreEtudiant--;
 	}
 	
 	/**
