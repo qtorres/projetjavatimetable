@@ -2,6 +2,7 @@
  * 2016, All rights reserved.
  *******************************************************************************/
 package userModel;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import userModel.Etudiants;
@@ -21,8 +22,9 @@ public class Groupe {
 
 	/**
 	 * création d'une liste d'étudiant
+	 *
 	 */
-	protected List<Etudiants> etudiants = new LinkedList<Etudiants>();
+	protected Hashtable etudiants2 = new Hashtable();
 	
 //----------------------------------Set------------------------------------
 
@@ -54,6 +56,14 @@ public class Groupe {
 		return NombreEtudiant;
 	}
 	
+	public Groupe GetGroupe() {
+		return this;
+	}
+	
+	public Hashtable GetEtudiants() {
+		return this.etudiants2;
+	}
+	
 	public void IncrementNombreEtudiant() {
 		NombreEtudiant++;
 	}
@@ -63,13 +73,7 @@ public class Groupe {
 		NombreEtudiant--;
 	}
 	
-	/**
-	 * Returns etudiants.
-	 * @return etudiants 
-	 */
-	public List<Etudiants> getEtudiants() {
-		return this.etudiants;
-	}
+	
 
 	
 	//-------------------------------------------METHODES------------------------------

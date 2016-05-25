@@ -41,7 +41,7 @@ public class UserController implements IUserController
 
 	@Override
 	public String getUserClass(String userLogin, String userPwd) {
-		return userDB.getUserClass(userLogin, userPwd);
+		return "non";
 	}
 
 	@Override
