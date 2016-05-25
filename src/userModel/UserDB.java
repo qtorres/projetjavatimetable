@@ -55,7 +55,7 @@ public class UserDB {
 
 		this.user.put("su", new Administrateur(0, "su", "su", "su", "su"));
 		loadDB();
-		saveDB();
+		
 	}
 
 	/**
@@ -361,24 +361,65 @@ public class UserDB {
  	//Fonction permettant de récupérer les identifiants des groupes sous la forme d'un tableau 
  	//de chaînes de caractères où chaque ligne contient l'identifiant d'un groupe.
  	public String[] groupsIdToString() {
- 		
- 		
- 			String tabGroup[] = new String[2];
- 			tabGroup[0] = "pas de groupe existants";
- 			tabGroup[1] = "pas de groupe existants";
- 			return tabGroup ;
- 		
+ 		String[] groupString = new String[this.group.size()];
+ 		Enumeration liste_group = this.group.keys();
+ 		int i = 0;
+ 		while(liste_group.hasMoreElements()) {
+			String cle = (String)liste_group.nextElement();
+			groupString[i] = cle;
+			i++;
+		}
+ 		return groupString;
  	}
  	
  	//Fonction permettant de récupérer toutes les informations des groupes sous la forme d'un tableau de 
  	//chaînes de caractères où chaque ligne contient les informations d'un groupe.
  	public String[] groupsToString() {
- 		String tabGroup[] = new String[2];
-			tabGroup[0] = "pas de groupe existants";
-			tabGroup[1] = "pas de groupe existants";
-			return tabGroup ;
+ 		String[] groupString = new String[this.group.size()];
+ 		Enumeration liste_group = this.group.keys();
+ 		int i = 0;
+ 		while(liste_group.hasMoreElements()) {
+			String cle = (String)liste_group.nextElement();
+			Groupe groupe = (Groupe)this.group.get(cle);
+			//on r�cupere l'�tudiant
+			Hashtable table = groupe.GetEtudiants();
+			Enumeration liste_etudiant = table.keys();
+			while(liste_etudiant.hasMoreElements()) {
+				String cle_etudiant = (String)liste_etudiant.nextElement();
+				Etudiants etudiantcourant = (Etudiants)table.get(cle_etudiant);
+				//maintenant on affiche
+				groupString[i] = etudiantcourant.GetLogin() + "|" + etudiantcourant.GetPrenom() + "|" + etudiantcourant.GetNom()+ "|" + etudiantcourant.GetMot_De_Passe() + "|" + etudiantcourant.GetIdEtudiant() + "|" + etudiantcourant.GetIdEtudiantGroup();
+						i++;
+			}
+			
+		}
+ 		return groupString;
  	}
  	
+ 	//renvoie toutes les info des utilisateurs
+ 	public String[] usersToString() {
+		  String[] userString = new String[this.user.size()];
+		  Set keys = user.keySet();
+		  Iterator it = keys.iterator();
+		  int i = 0;
+		  while (it.hasNext()){
+		     String key = (String)it.next();
+		     Utilisateur userTemp = (Utilisateur)user.get(key);
+		     if (userTemp instanceof Etudiants) {
+		      userString[i] = ((Etudiants) userTemp).GetIdEtudiant() + "|" + userTemp.GetLogin() + "|" + userTemp.GetMot_De_Passe() + "|" + userTemp.GetPrenom() + "|" + userTemp.GetNom() + "|" + ((Etudiants)userTemp).GetIdEtudiantGroup();
+		     }
+		     if (userTemp instanceof Professeur) {
+		      userString[i] = ((Professeur) userTemp).GetIdProf() + "|" + userTemp.GetLogin() + "|" + userTemp.GetMot_De_Passe() + "|" + userTemp.GetPrenom() + "|" + userTemp.GetNom();
+		     }
+		     if (userTemp instanceof Administrateur) {
+		      userString[i] = ((Administrateur) userTemp).getIdAdmin() + "|" + userTemp.GetLogin() + "|" + userTemp.GetMot_De_Passe() + "|" + userTemp.GetPrenom() + "|" + userTemp.GetNom();
+		     }
+		     ++i;
+		  }
+		  return userString;
+		 }
+ 	
+ 	//renvoie tous les login des utilisateurs
  	public String[] usersLoginToString() {
  		  String[] userLoginString = new String[this.user.size()];
  		  Set keys = user.keySet();

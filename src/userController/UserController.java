@@ -91,20 +91,17 @@ public class UserController implements IUserController
 
 	@Override
 	public boolean associateStudToGroup(String adminLogin, String studentLogin, int groupId) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.associateStudToGroup(adminLogin, studentLogin, groupId);
 	}
 
 	@Override
 	public String[] usersToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDB.usersToString();
 	}
 
 	@Override
 	public String[] usersLoginToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDB.usersLoginToString();
 	}
 
 	@Override
@@ -133,8 +130,7 @@ public class UserController implements IUserController
 
 	@Override
 	public boolean saveDB() {
-		// TODO Auto-generated method stub
-		return false;
+		return saveDB();
 	}
 
 	public UserDB getUserDB() {
