@@ -30,6 +30,8 @@ import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.Enumeration;
+import java.util.Set;
 
 /**
  * Description of UserDB.
@@ -41,10 +43,9 @@ public class UserDB {
 	 * Description of the property file.
 	 */
 	
-
 	private String nomfichier;
-	protected Hashtable utilisateur2 = new Hashtable();
-	protected Hashtable group2 = new Hashtable();
+	protected Hashtable user = new Hashtable();
+	protected Hashtable group = new Hashtable();
 	
 	/**
 	 * The constructor.
@@ -52,15 +53,16 @@ public class UserDB {
 	public UserDB(String userfile) {
 		this.nomfichier=userfile;
 
-		this.utilisateur2.put("su", new Administrateur(0, "su", "su", "su", "su"));
+		this.user.put("su", new Administrateur(0, "su", "su", "su", "su"));
 		loadDB();
+		saveDB();
 	}
 
 	/**
 	 * charge la base de données à partir du fichier XML
 	 * 
 	 */
-	    public boolean loadDB()  {
+	   public boolean loadDB()  {
 		SAXBuilder sax;
 		sax = new SAXBuilder();
 		Document document;
@@ -115,7 +117,7 @@ public class UserDB {
       	      g = student1.get(5).getText();
 
       	      //on crée l'objet Etudiant
-      	    this.utilisateur2.put(login, new Etudiants(Integer.parseInt(id), prenom, nom, login, mdp, Integer.parseInt(g)));
+      	    this.user.put(login, new Etudiants(Integer.parseInt(id), prenom, nom, login, mdp, Integer.parseInt(g)));
       	  
 	  }
  
@@ -142,7 +144,7 @@ public class UserDB {
 	      	      id = liste.get(4).getText();
 
 	      	      //on crée l'objet Professeur
-	      	      this.utilisateur2.put(login, new Professeur(Integer.parseInt(id), prenom, nom, login, mdp));
+	      	      this.user.put(login, new Professeur(Integer.parseInt(id), prenom, nom, login, mdp));
 		  }
 	      	
 	  }
@@ -169,7 +171,7 @@ public class UserDB {
 	      	      id = liste.get(4).getText();
 
 	      	      //on crée l'objet Admin
-	      	    this.utilisateur2.put(login, new Administrateur(Integer.parseInt(id), prenom, nom, login, mdp));
+	      	    this.user.put(login, new Administrateur(Integer.parseInt(id), prenom, nom, login, mdp));
 	      	     	
 	      	      }
 	  }
@@ -191,18 +193,18 @@ public class UserDB {
 	      	      id = liste.get(0).getText();
 
 	      	      //on crée l'objet groupe
-	      	    this.group2.put(id, new Groupe(Integer.parseInt(id)));
+	      	    this.group.put(id, new Groupe(Integer.parseInt(id)));
 
 		  }
 	  }
 	  
 	  public boolean associateStudToGroup(String adminLogin, String studentLogin, int groupId) {
 		 //si le login administrateur est correct et que le login etudiant est correct
-		  if(this.utilisateur2.get(adminLogin) instanceof Administrateur && this.utilisateur2.get(studentLogin) instanceof Etudiants) {
+		  if(this.user.get(adminLogin) instanceof Administrateur && this.user.get(studentLogin) instanceof Etudiants) {
 			  //si le groupe existe
-			  if(this.group2.get(groupId) instanceof Groupe) {
-				  Groupe groupe = (Groupe)this.group2.get(groupId);
-				  groupe.GetEtudiants().put(studentLogin, this.utilisateur2.get(studentLogin));
+			  if(this.group.get(groupId) instanceof Groupe) {
+				  Groupe groupe = (Groupe)this.group.get(groupId);
+				  groupe.GetEtudiants().put(studentLogin, this.user.get(studentLogin));
 			  }
 			  else {
 				 // addGroup();
@@ -218,15 +220,136 @@ public class UserDB {
 	 /**
 	 * Description of the method saveDB.
 	 */
-	public void saveDB() {
+	public boolean saveDB() {
 		
-	}
+		Enumeration liste_user = this.user.keys();
+		Enumeration liste_group = this.group.keys();
+		SAXBuilder sax =  new SAXBuilder();
+		Document document = null;
+        Element racine = new Element("UsersDB");
+        Element racine_groups = new Element("Groups");
+        Element racine_students = new Element("Students");
+        Element racine_teachers = new Element("Teachers");
+        Element racine_administrators = new Element("Administrators");
+        racine.addContent((Content)racine_groups);
+        racine.addContent((Content)racine_students);
+        racine.addContent((Content)racine_teachers);
+        racine.addContent((Content)racine_administrators);
+        
+        try { //on essaye d'ouvrir le fichier
+            document = sax.build(new File(this.nomfichier));
+        } catch (Exception v0) {}
+        
+        if(document != null) { //si on arrive à ouvrir le fichier
+        	
+        	
+        	//Pour les groupes
+		while(liste_group.hasMoreElements()) {
+			String cle = (String)liste_group.nextElement();
+			Element group = new Element("Group");
+            Element groupId = new Element("groupId");
+            groupId.setText(cle);
+            group.addContent((Content)groupId);
+            racine_groups.addContent((Content)group);
+		}
 
-	//renvoie la classe de la personne à partir du login et du mot de passe
-	//public String getUserClass(String userLogin, String userPwd) {
-	
+		//pour les utilisateurs
+		while(liste_user.hasMoreElements()) {
+			String cle = (String)liste_user.nextElement();
 			
-		//}
+			//si c'est un étudiant
+			if(this.user.get(cle) instanceof Etudiants) {
+				Etudiants etudiant = (Etudiants)this.user.get(cle);
+				Element Student = new Element("Student");
+				Element login = new Element("login");
+				Element firstname = new Element("firstname");
+				Element surname = new Element("surname");
+				Element pwd = new Element("pwd");
+				Element studentId = new Element("studentId");
+				Element groupId = new Element("groupId");
+				login.setText(cle);
+				firstname.setText(etudiant.GetPrenom());
+				surname.setText(etudiant.GetNom());
+				pwd.setText(etudiant.GetMot_De_Passe());
+				studentId.setText(Integer.toString(etudiant.GetIdEtudiant()));
+				groupId.setText(Integer.toString(etudiant.GetIdEtudiantGroup()));
+				Student.addContent(login);
+				Student.addContent(firstname);
+				Student.addContent(surname);
+				Student.addContent(pwd);
+				Student.addContent(studentId);
+				Student.addContent(groupId);
+				racine_students.addContent(Student);
+			}
+			
+			//Si c'est un professeur
+			if(this.user.get(cle) instanceof Professeur) {
+				Professeur professeur = (Professeur)this.user.get(cle);
+				Element Teacher = new Element("Teacher");
+				Element login = new Element("login");
+				Element firstname = new Element("firstname");
+				Element surname = new Element("surname");
+				Element pwd = new Element("pwd");
+				Element teacherId = new Element("teacherId");
+				login.setText(cle);
+				firstname.setText(professeur.GetPrenom());
+				surname.setText(professeur.GetNom());
+				pwd.setText(professeur.GetMot_De_Passe());
+				teacherId.setText(Integer.toString(professeur.GetIdProf()));
+				Teacher.addContent(login);
+				Teacher.addContent(firstname);
+				Teacher.addContent(surname);
+				Teacher.addContent(pwd);
+				Teacher.addContent(teacherId);
+				racine_teachers.addContent(Teacher);
+			}
+			
+			//Si c'est un Administrateur
+			if(this.user.get(cle) instanceof Administrateur) {
+				Administrateur administrateur = (Administrateur)this.user.get(cle);
+				Element Admin = new Element("Administrator");
+				Element login = new Element("login");
+				Element firstname = new Element("firstname");
+				Element surname = new Element("surname");
+				Element pwd = new Element("pwd");
+				Element adminId = new Element("adminId");
+				login.setText(cle);
+				firstname.setText(administrateur.GetPrenom());
+				surname.setText(administrateur.GetNom());
+				pwd.setText(administrateur.GetMot_De_Passe());
+				adminId.setText(Integer.toString(administrateur.getIdAdmin()));
+				Admin.addContent(login);
+				Admin.addContent(firstname);
+				Admin.addContent(surname);
+				Admin.addContent(pwd);
+				Admin.addContent(adminId);
+				racine_administrators.addContent(Admin);
+			}
+			
+        } //fin while
+		
+		//on ajoute le tout
+		document.setRootElement(racine);
+		
+
+        try {
+        	XMLOutputter object = new XMLOutputter(Format.getPrettyFormat());
+            object.output(document, (OutputStream)new FileOutputStream(this.nomfichier));
+        }
+        catch (IOException v0) {
+            return false;
+        }
+        return true;
+	} //fin écriture document
+        return true;
+	} //fin fonction
+	
+	
+	//renvoie la classe de la personne à partir du login et du mot de passe
+	public String getUserClass(String userLogin, String userPwd) {
+	return "ok";
+			
+		}
 
 	
 	//Fonction qui renvoie le prenom et le nom de l'utilisateur à partir de son login
@@ -256,4 +379,17 @@ public class UserDB {
 			return tabGroup ;
  	}
  	
+ 	public String[] usersLoginToString() {
+ 		  String[] userLoginString = new String[this.user.size()];
+ 		  Set keys = user.keySet();
+ 		  Iterator it = keys.iterator();
+ 		  int i = 0;
+ 		  while (it.hasNext()){
+ 		     String key = (String)it.next();
+ 		     Utilisateur userTemp = (Utilisateur)user.get(key);
+ 		     userLoginString[i] = userTemp.GetLogin();
+ 		     ++i;
+ 		  }
+ 		  return userLoginString;
+ 		 }
 }
