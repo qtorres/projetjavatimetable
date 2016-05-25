@@ -41,13 +41,12 @@ public class UserController implements IUserController
 
 	@Override
 	public String getUserClass(String userLogin, String userPwd) {
-		return "non";
+		return userDB.getUserClass(userLogin, userPwd);
 	}
 
 	@Override
 	public int getStudentGroup(String studentLogin) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Integer.parseInt(userDB.getStudentGroup(studentLogin));
 	}
 
 	@Override
@@ -73,14 +72,12 @@ public class UserController implements IUserController
 
 	@Override
 	public boolean removeUser(String adminLogin, String userLogin) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.removeUser(adminLogin, userLogin);
 	}
 
 	@Override
 	public boolean addGroup(String adminLogin, int groupId) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.addGroup(adminLogin, groupId);
 	}
 
 	@Override
@@ -106,26 +103,23 @@ public class UserController implements IUserController
 
 	@Override
 	public String[] studentsLoginToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDB.usersToString();	
 	}
 
 	@Override
 	public String[] groupsIdToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDB.groupsIdToString();
 	}
 
 	@Override
 	public String[] groupsToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDB.groupsToString();
+		
 	}
 
 	@Override
 	public boolean loadDB() {
 		return userDB.loadDB();
-	
 	}
 
 	@Override

@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Collection;
 import java.util.Hashtable;
 import org.jdom2.Content;
 import org.jdom2.Document;
@@ -27,9 +25,6 @@ import userModel.Groupe;
 import userModel.Professeur;
 import userModel.Utilisateur;
 import java.io.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -55,7 +50,7 @@ public class UserDB {
 
 		this.user.put("su", new Administrateur(0, "su", "su", "su", "su"));
 		loadDB();
-		
+		groupsToString();
 	}
 
 	/**
@@ -344,19 +339,55 @@ public class UserDB {
         return true;
 	} //fin fonction
 	
-	
 	//renvoie la classe de la personne � partir du login et du mot de passe
 	public String getUserClass(String userLogin, String userPwd) {
-	return "ok";
-			
-		}
+		  String userClass = "";
+		  boolean isUserFound = false;
+		  Utilisateur userFound;
+		  userFound = (Utilisateur)this.user.get(userLogin);
+		  
+		  if (userFound != null && userFound.GetMot_De_Passe().compareTo(userPwd) == 0) {
+		   System.out.println("User Found.");
+		   isUserFound = true;
+		  }
+		  
+		  else {
+		   System.out.println("Unknown User.");
+		   isUserFound = false;
+		  }
+		  
+		  if (isUserFound == true) {
+		   if (userFound instanceof Etudiants) {
+		    userClass = "Student";
+		   }
+		   if (userFound instanceof Professeur) {
+		    userClass = "Teacher";
+		   }
+		   if (userFound instanceof Administrateur) {
+		    userClass = "Administrator";
+		   }
+		  }
+		  return userClass;
+	}
 
+	public String getStudentGroup(String studentLogin) {
+		  if (this.user.get(studentLogin) instanceof Etudiants) {
+		   return String.valueOf(((Etudiants)this.user.get(studentLogin)).GetIdEtudiantGroup());
+		  }
+		  else {
+		   return null;
+		  }
+		 }
 	
 	//Fonction qui renvoie le prenom et le nom de l'utilisateur � partir de son login
- 	public String getUserName(String userLogin) {
- 		
- 		return "Login incorrect, impossible de trouver l'utilisateur";
- 	}
+ 		public String getUserName(String userLogin) {
+ 			  if (this.user.get(userLogin) != null) {
+ 			   return String.valueOf(((Etudiants)this.user.get(userLogin)).GetPrenom()) + String.valueOf(((Etudiants)this.user.get(userLogin)).GetNom());
+ 			  }
+ 			  else {
+ 			   return null;
+ 			  }
+ 			 }
 
  	//Fonction permettant de récupérer les identifiants des groupes sous la forme d'un tableau 
  	//de chaînes de caractères où chaque ligne contient l'identifiant d'un groupe.
@@ -368,6 +399,7 @@ public class UserDB {
 			String cle = (String)liste_group.nextElement();
 			groupString[i] = cle;
 			i++;
+			System.out.println(cle);
 		}
  		return groupString;
  	}
@@ -390,6 +422,7 @@ public class UserDB {
 				//maintenant on affiche
 				groupString[i] = etudiantcourant.GetLogin() + "|" + etudiantcourant.GetPrenom() + "|" + etudiantcourant.GetNom()+ "|" + etudiantcourant.GetMot_De_Passe() + "|" + etudiantcourant.GetIdEtudiant() + "|" + etudiantcourant.GetIdEtudiantGroup();
 						i++;
+						
 			}
 			
 		}
@@ -433,4 +466,37 @@ public class UserDB {
  		  }
  		  return userLoginString;
  		 }
+
+
+public boolean removeUser(String adminLogin, String userLogin) {
+	  Boolean removeUser = false;
+	  int newIdgroup=0;
+	  if (this.user.get(adminLogin) instanceof Administrateur && this.user.containsKey(userLogin)) 
+	     {
+	   Utilisateur utilisateur = (Utilisateur)this.user.get(userLogin);
+	   Etudiants etud = (Etudiants)utilisateur;
+	   newIdgroup = etud.GetIdEtudiantGroup(); 
+	   if (utilisateur instanceof Etudiants && newIdgroup != -1){
+	    this.user.remove(userLogin);
+	    newIdgroup = -1;
+	    removeUser = true;
+	   }
+	 }
+	  return removeUser;
+}
+
+public Boolean addGroup(String adminLogin, int groupId) {
+	  // Start of user code for method addGroup
+	  Boolean addGroup = false;
+	  if (this.user.get(adminLogin) instanceof Administrateur && this.group.get(groupId) == null) 
+	     {
+	      this.group.put(groupId, new Groupe(groupId));
+	         addGroup = true;
+	     }
+	     return addGroup;
+	    
+}
+	 
+
+
 }
