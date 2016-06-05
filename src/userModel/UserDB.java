@@ -209,12 +209,10 @@ public class UserDB {
 				  Groupe groupe = (Groupe)this.group.get(groupId);
 				  groupe.GetEtudiants().put(studentLogin, this.user.get(studentLogin));
 				  groupe.IncrementNombreEtudiant();
-				  this.group.remove(groupId);
-				  this.group.put(groupId, groupe);
+				  this.group.replace(groupId, groupe);
 				  Etudiants truc = (Etudiants)this.user.get(studentLogin);
 				  truc.SetIdEtudiantGroup(groupId);
-				  this.user.remove(studentLogin);
-				  this.user.put(studentLogin, truc);
+				  this.user.replace(studentLogin, truc);
 				 
 			  }
 			  else {
@@ -514,8 +512,8 @@ public boolean removeUser(String adminLogin, String userLogin) {
 		      Hashtable table = groupe.GetEtudiants();
 		      table.remove(userLogin);
 		      groupe.SetEtudiants2(table);
-		      this.group.remove(Idgroup);
-		      this.group.put(Idgroup, groupe); }
+		      this.group.replace(Idgroup, groupe);
+		       }
 	   }
 	   //on sauvegarde
 	   saveDB();
@@ -604,7 +602,6 @@ public Boolean addTeacher(String adminLogin, String newteacherLogin, int teacher
  * @param pwd 
  * @return 
  */
-
 public Boolean addAdmin(String adminLogin, String newAdminlogin, int adminID, String firstname, String surname, String pwd) {
 	//Si on est administrateur et que le le login n'éxiste pas déjà 
 		if (this.user.get(adminLogin) instanceof Administrateur && this.user.get(newAdminlogin) == null) {
@@ -641,12 +638,10 @@ public Boolean removeGroup(String adminLogin, int groupId) {
 		//tant qu'il y a des étudiants
 		while(liste_user.hasMoreElements()) {
 			String cle = (String)liste_user.nextElement();
-			System.out.println(cle);
 			Etudiants e = (Etudiants)this.user.get(cle);
 			e.SetIdEtudiantGroup(-1);
-			System.out.println(e.GetLogin());
-			this.user.remove(cle);
-			this.user.put(cle, e);
+			this.user.replace(cle, e);
+			
 		}
 		//et on supprime le groupe
 		this.group.remove(groupId);

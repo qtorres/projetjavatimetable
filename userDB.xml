@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UsersDB>
-  <Groups>
-    <Group>
-      <groupId>1</groupId>
-    </Group>
-  </Groups>
+  <Groups />
   <Students>
+    <Student>
+      <login>tyty</login>
+      <firstname>jefn</firstname>
+      <surname>tjfj</surname>
+      <pwd>tyty</pwd>
+      <studentId>77</studentId>
+      <groupId>-1</groupId>
+    </Student>
     <Student>
       <login>BS</login>
       <firstname>Buffy</firstname>
       <surname>Summers</surname>
       <pwd>stake</pwd>
       <studentId>2001</studentId>
-      <groupId>1</groupId>
-    </Student>
-    <Student>
-      <login>etudiant</login>
-      <firstname>dezifoj</firstname>
-      <surname>studiant</surname>
-      <pwd>etudiant</pwd>
-      <studentId>8</studentId>
       <groupId>-1</groupId>
     </Student>
   </Students>
