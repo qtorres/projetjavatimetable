@@ -41,6 +41,10 @@ public class Groupe {
 	public void SetNombreEtudiant(int Nombre) {
 		NombreEtudiant = Nombre;
 	}
+	
+	public void SetEtudiants2(Hashtable table) {
+		etudiants2 = table;
+	}
 //---------------------------------GET-------------------------------------
 	/**
 	 * Description of the method GetIdGroup.

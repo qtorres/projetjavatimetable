@@ -52,22 +52,20 @@ public class UserController implements IUserController
 	@Override
 	public boolean addAdmin(String adminLogin, String newAdminlogin, int adminID, String firstname, String surname,
 			String pwd) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.addAdmin(adminLogin, newAdminlogin, adminID, firstname, surname, pwd);
+		
 	}
 
 	@Override
 	public boolean addTeacher(String adminLogin, String newteacherLogin, int teacherID, String firstname,
 			String surname, String pwd) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.addTeacher(adminLogin, newteacherLogin, teacherID, firstname, surname, pwd);
 	}
 
 	@Override
 	public boolean addStudent(String adminLogin, String newStudentLogin, int studentID, String firstname,
 			String surname, String pwd) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDB.addStudent(adminLogin, newStudentLogin, studentID, firstname, surname, pwd);
 	}
 
 	@Override
@@ -82,13 +80,12 @@ public class UserController implements IUserController
 
 	@Override
 	public boolean removeGroup(String adminLogin, int groupId) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.userDB.removeGroup(adminLogin, groupId);
 	}
 
 	@Override
 	public boolean associateStudToGroup(String adminLogin, String studentLogin, int groupId) {
-		return userDB.associateStudToGroup(adminLogin, studentLogin, groupId);
+		return this.userDB.associateStudToGroup(adminLogin, studentLogin, groupId);
 	}
 
 	@Override
@@ -103,7 +100,7 @@ public class UserController implements IUserController
 
 	@Override
 	public String[] studentsLoginToString() {
-		return userDB.usersToString();	
+		return userDB.studentsLoginToString();	
 	}
 
 	@Override
